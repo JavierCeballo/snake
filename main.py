@@ -2,6 +2,8 @@
 import pygame
 from pygame.locals import *
 import constants
+# 3.9 import time module
+import time
 
 
 class Snake():
@@ -12,28 +14,42 @@ class Snake():
         # Initial position
         self.x = constants.WIDTH/2
         self.y = constants.HEIGHT/2
+        # 3.2 Initial movement direction of the snake
+        self.direction = None
         
     def move_left(self):
-        # for decrease the position in x
-        self.x -= 10
-        self.draw()
+        # 3.3 setting direction of the snake
+        self.direction = "left"
         
     def move_right(self):
-        # for increment the position in x
-        self.x += 10
-        self.draw()
+        # 3.4 setting direction of the snake
+        self.direction = "right"
         
     def move_up(self):
-        # for decrease the position in y
-        self.y -= 10
-        self.draw()
+        # 3.5 setting direction of the snake
+        self.direction = "up"
         
     def move_down(self):
-        # for increment the position in y
-        self.y += 10
+        # 3.6 setting direction of the snake
+        self.direction = "down"
+        
+    def walk(self):
+        # 3.7 check snakes' direction and move it
+        if self.direction == 'left':
+            self.x -= 10
+        if self.direction == 'right':
+            self.x += 10
+        if self.direction == 'up':
+            self.y -= 10
+        if self.direction == 'down':
+            self.y += 10
+        
+        # 3.8 draw snake for each chance of direction
         self.draw()
         
+        
     def draw(self):
+        self.parent_window.fill(constants.BG_COLOR)
         self.parent_window.blit(self.snake_body, (self.x, self.y))
         pygame.display.flip()
     
@@ -98,6 +114,11 @@ class Game():
                         
                 elif event.type == QUIT:
                     running = False
+            
+            # 3.1 Call to walk method        
+            self.snake.walk()
+            # 3.10 Call the sleep module
+            time.sleep(0.2)
 
 # Creating a game object  
 game = Game()

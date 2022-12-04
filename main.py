@@ -2,56 +2,64 @@
 import pygame
 from pygame.locals import *
 import constants
-# 3.9 import time module
+# import time module
 import time
 
 
 class Snake():
-    def __init__(self, window):
+    # 4.1 Adding length parameter
+    def __init__(self, window, length):
+        self.length = length
         self.parent_window = window
         # Load the snake body image
         self.snake_body = pygame.image.load("images/snake_section_body.png")
-        # Initial position
-        self.x = constants.WIDTH/2
-        self.y = constants.HEIGHT/2
-        # 3.2 Initial movement direction of the snake
-        self.direction = None
+        # 4.2 Initial position
+        self.x = [constants.SNAKE_BODY_SIZE]*length
+        self.y = [constants.SNAKE_BODY_SIZE]*length
+        # Initial movement direction of the snake
+        self.direction = "down"
         
     def move_left(self):
-        # 3.3 setting direction of the snake
+        # setting direction of the snake
         self.direction = "left"
         
     def move_right(self):
-        # 3.4 setting direction of the snake
+        # setting direction of the snake
         self.direction = "right"
         
     def move_up(self):
-        # 3.5 setting direction of the snake
+        # setting direction of the snake
         self.direction = "up"
         
     def move_down(self):
-        # 3.6 setting direction of the snake
+        # setting direction of the snake
         self.direction = "down"
         
     def walk(self):
-        # 3.7 check snakes' direction and move it
+        # 4.5 check snakes' direction and move it
+        for i in range(self.length-1,0, -1):
+            self.x[i] = self.x[i-1]
+            self.y[i] = self.y[i-1]
+            
         if self.direction == 'left':
-            self.x -= 10
+            self.x[0] -= constants.SNAKE_BODY_SIZE
         if self.direction == 'right':
-            self.x += 10
+            self.x[0] += constants.SNAKE_BODY_SIZE
         if self.direction == 'up':
-            self.y -= 10
+            self.y[0] -= constants.SNAKE_BODY_SIZE
         if self.direction == 'down':
-            self.y += 10
+            self.y[0] += constants.SNAKE_BODY_SIZE
         
-        # 3.8 draw snake for each chance of direction
+        # draw snake for each chance of direction
         self.draw()
         
         
     def draw(self):
         self.parent_window.fill(constants.BG_COLOR)
-        self.parent_window.blit(self.snake_body, (self.x, self.y))
-        pygame.display.flip()
+        # 4.4 Draw the snake body in diferets coordinates
+        for i in range(self.length):
+            self.parent_window.blit(self.snake_body, (self.x[i], self.y[i]))
+            pygame.display.flip()
     
  
 class Game():
@@ -70,7 +78,7 @@ class Game():
         self.window.fill(constants.BG_COLOR)
         
         # Creating a snake object
-        self.snake = Snake(self.window)
+        self.snake = Snake(self.window, 3)
         self.snake.draw()
         
         pygame.display.update()
@@ -115,9 +123,9 @@ class Game():
                 elif event.type == QUIT:
                     running = False
             
-            # 3.1 Call to walk method        
+            # Call to walk method        
             self.snake.walk()
-            # 3.10 Call the sleep module
+            # Call the sleep module
             time.sleep(0.2)
 
 # Creating a game object  

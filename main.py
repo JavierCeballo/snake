@@ -5,7 +5,18 @@ import constants
 # import time module
 import time
 
-
+# 4.6 Creating a Hamburger class
+class Hamburger():
+    def __init__(self, parent_window):
+        self.image = pygame.image.load("images/hamburger.png")
+        self.parent_window = parent_window
+        self.x = 120
+        self.y = 120
+        
+    def draw(self):
+        self.parent_window.blit(self.image, (self.x, self.y))
+        pygame.display.flip()
+        
 class Snake():
     # 4.1 Adding length parameter
     def __init__(self, window, length):
@@ -78,10 +89,14 @@ class Game():
         self.window.fill(constants.BG_COLOR)
         
         # Creating a snake object
-        self.snake = Snake(self.window, 3)
+        self.snake = Snake(self.window, 5)
         self.snake.draw()
         
-        pygame.display.update()
+        # 4.7 Draw the apple
+        self.hamburger = Hamburger(self.window)
+        self.hamburger.draw()
+        
+        #pygame.display.update()
         
         
     def run(self):
@@ -125,8 +140,11 @@ class Game():
             
             # Call to walk method        
             self.snake.walk()
+            
+            #4.8 Draw the hamburger
+            self.hamburger.draw()
             # Call the sleep module
-            time.sleep(0.2)
+            time.sleep(0.3)
 
 # Creating a game object  
 game = Game()

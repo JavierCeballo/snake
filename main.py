@@ -5,6 +5,9 @@ import constants
 # import time module
 import time
 
+# 5.4 import random
+import random
+
 # 4.6 Creating a Hamburger class
 class Hamburger():
     def __init__(self, parent_window):
@@ -16,6 +19,11 @@ class Hamburger():
     def draw(self):
         self.parent_window.blit(self.image, (self.x, self.y))
         pygame.display.flip()
+        
+    # 5.5 move method
+    def move(self):
+        self.x = random.randint(1,12)*64
+        self.y = random.randint(1,9)*64
         
 class Snake():
     # 4.1 Adding length parameter
@@ -29,6 +37,12 @@ class Snake():
         self.y = [constants.SNAKE_BODY_SIZE]*length
         # Initial movement direction of the snake
         self.direction = "down"
+        
+    # 5.6 Increase lenght
+    def increase_length(self):
+        self.length += 1
+        self.x.append(-1)
+        self.y.append(-1)
         
     def move_left(self):
         # setting direction of the snake
@@ -70,7 +84,7 @@ class Snake():
         # 4.4 Draw the snake body in diferets coordinates
         for i in range(self.length):
             self.parent_window.blit(self.snake_body, (self.x[i], self.y[i]))
-            pygame.display.flip()
+        pygame.display.flip()
     
  
 class Game():
@@ -89,7 +103,7 @@ class Game():
         self.window.fill(constants.BG_COLOR)
         
         # Creating a snake object
-        self.snake = Snake(self.window, 5)
+        self.snake = Snake(self.window, 1)
         self.snake.draw()
         
         # 4.7 Draw the apple
@@ -97,6 +111,39 @@ class Game():
         self.hamburger.draw()
         
         #pygame.display.update()
+        
+    # 5.1 Collition
+    def if_collition(self, x1, y1, x2, y2):
+        if x1 >= x2 and x1 < x2 + 32:
+            if y1 >= y2 and y1 < y2 + 32:
+                return True
+        return False
+    
+    # 5.2 Play function
+    def play(self):
+        self.snake.walk()
+        self.hamburger.draw()
+        # 5.9 Show score
+        self.display_score()
+        pygame.display.flip()
+        
+        if self.if_collition(self.snake.x[0], self.snake.y[0], self.hamburger.x, self.hamburger.y):
+            #print("Collition ocurred")
+            # 5.7 Call increase length
+            self.snake.increase_length()
+            # 5.3 move
+            self.hamburger.move()
+            
+    
+    # 5.8 Show score
+    def display_score(self):
+        font = pygame.font.SysFont('arial',30)
+        score = font.render(f"Score: {self.snake.length}",True,(200,200,200))
+        self.window.blit(score,(100,10))
+            
+        
+        
+        
         
         
     def run(self):
@@ -138,11 +185,8 @@ class Game():
                 elif event.type == QUIT:
                     running = False
             
-            # Call to walk method        
-            self.snake.walk()
-            
-            #4.8 Draw the hamburger
-            self.hamburger.draw()
+            # 5.3 Call the play module
+            self.play()
             # Call the sleep module
             time.sleep(0.3)
 

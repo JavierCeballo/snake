@@ -103,7 +103,7 @@ class Game():
         self.window.fill(constants.BG_COLOR)
         
         # Creating a snake object
-        self.snake = Snake(self.window, 1)
+        self.snake = Snake(self.window, 8)
         self.snake.draw()
         
         # 4.7 Draw the apple
@@ -111,6 +111,10 @@ class Game():
         self.hamburger.draw()
         
         #pygame.display.update()
+        
+    def reset(self):
+        self.snake = Snake(self.window, 7)
+        self.hamburger = Hamburger(self.window)
         
     # 5.1 Collition
     def if_collition(self, x1, y1, x2, y2):
@@ -134,11 +138,30 @@ class Game():
             # 5.3 move
             self.hamburger.move()
             
+        # 6.1 Snake colliding with itself
+        for i in range(3, self.snake.length):
+            if self.if_collition(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
+                #print("Game Over")
+                #exit(0)
+                raise "Game Over"
+                #self.show_game_over()
+            
+    # 6.2 Show game over function
+    def show_game_over(self):
+        self.window.fill(constants.BG_COLOR)
+        font = pygame.font.SysFont("arial", 30)
+        message1 = font.render(f"Game Over! Your score is {self.snake.length}", True, (255, 255, 255))
+        self.window.blit(message1, (200, 300))
+        message2 = font.render("To play again press Enter. To exit press Escape!", True, (255, 255, 255))
+        self.window.blit(message2, (200, 350))
+        pygame.display.flip()
+        
+            
     
     # 5.8 Show score
     def display_score(self):
         font = pygame.font.SysFont('arial',30)
-        score = font.render(f"Score: {self.snake.length}",True,(200,200,200))
+        score = font.render(f"Score: {self.snake.length - 7}",True,(200,200,200))
         self.window.blit(score,(100,10))
             
         
@@ -150,6 +173,9 @@ class Game():
         # Creating a bool value which checks
         # if game is running
         running = True
+        
+        # 6.3 pause variable
+        pause = False
         
         # Keep game running till running is true
         while running:
@@ -164,29 +190,45 @@ class Game():
                     
                     if event.key == K_ESCAPE:
                         running = False
+                        
+                    # 6.5 Replay the game
+                    if event.key == K_RETURN:
+                        pause = False
+                        
+                    # 6.6 Update keystrokes
+                    if not pause: 
                     
-                    # Movement to left
-                    if event.key == K_LEFT:
-                        self.snake.move_left()
-                    
-                    # Movement to right
-                    if event.key == K_RIGHT:
-                        self.snake.move_right()
-                    
-                    # Movement to up 
-                    if event.key == K_UP:
-                        self.snake.move_up()
-                    
-                    # Movement to down
-                    if event.key == K_DOWN:
-                        self.snake.move_down()  
+                        # Movement to left
+                        if event.key == K_LEFT:
+                            self.snake.move_left()
+                        
+                        # Movement to right
+                        if event.key == K_RIGHT:
+                            self.snake.move_right()
+                        
+                        # Movement to up 
+                        if event.key == K_UP:
+                            self.snake.move_up()
+                        
+                        # Movement to down
+                        if event.key == K_DOWN:
+                            self.snake.move_down()  
                     
                         
                 elif event.type == QUIT:
                     running = False
             
-            # 5.3 Call the play module
-            self.play()
+            # 6.4 mechanims pause
+            try:
+                if not pause:
+                    self.play()
+            except Exception as e:
+                self.show_game_over()
+                pause = True
+                
+                # 6.7 call reset method
+                self.reset()
+                
             # Call the sleep module
             time.sleep(0.3)
 
